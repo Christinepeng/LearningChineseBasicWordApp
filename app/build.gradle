@@ -1,4 +1,5 @@
 apply plugin: 'com.android.application'
+apply plugin: 'org.jetbrains.kotlin.android'
 
 android {
 
@@ -22,6 +23,9 @@ android {
         }
     }
     namespace 'com.renameExample.android.learnChinese'
+    kotlinOptions {
+        jvmTarget = '17'
+    }
 }
 
 
