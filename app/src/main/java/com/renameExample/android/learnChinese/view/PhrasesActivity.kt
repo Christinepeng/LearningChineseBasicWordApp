@@ -17,15 +17,15 @@ class PhrasesActivity : AppCompatActivity() {
     private var mAudioManager: AudioManager? = null
     private val mCompletionListener = OnCompletionListener { releaseMediaPlayer() }
     private val mOnAudioFocusChangeListener = OnAudioFocusChangeListener { focusChange ->
-        if (focusChange == AudioManager.AUDIOFOCUS_LOSS_TRANSIENT ||
-            focusChange == AudioManager.AUDIOFOCUS_LOSS_TRANSIENT_CAN_DUCK
-        ) {
-            mMediaPlayer!!.pause()
-            mMediaPlayer!!.seekTo(0)
-        } else if (focusChange == AudioManager.AUDIOFOCUS_GAIN) {
-            mMediaPlayer!!.start()
-        } else if (focusChange == AudioManager.AUDIOFOCUS_LOSS) {
-            releaseMediaPlayer()
+        when (focusChange) {
+            AudioManager.AUDIOFOCUS_LOSS_TRANSIENT,
+            AudioManager.AUDIOFOCUS_LOSS_TRANSIENT_CAN_DUCK -> {
+                mMediaPlayer?.pause()
+                mMediaPlayer?.seekTo(0)
+            }
+
+            AudioManager.AUDIOFOCUS_GAIN -> mMediaPlayer?.start()
+            AudioManager.AUDIOFOCUS_LOSS -> releaseMediaPlayer()
         }
     }
 
@@ -33,6 +33,9 @@ class PhrasesActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.word_list)
         mAudioManager = getSystemService(AUDIO_SERVICE) as AudioManager
+        setupListView()
+    }
+    private fun setupListView() {
         val words = ArrayList<Word>()
         words.add(
             Word(
@@ -66,8 +69,8 @@ class PhrasesActivity : AppCompatActivity() {
             )
             if (result == AudioManager.AUDIOFOCUS_REQUEST_GRANTED) {
                 mMediaPlayer = MediaPlayer.create(this@PhrasesActivity, word.getmAudioResourceId())
-                mMediaPlayer!!.start()
-                mMediaPlayer!!.setOnCompletionListener(mCompletionListener)
+                mMediaPlayer?.start()
+                mMediaPlayer?.setOnCompletionListener(mCompletionListener)
             }
         }
     }
@@ -81,7 +84,7 @@ class PhrasesActivity : AppCompatActivity() {
         if (mMediaPlayer != null) {
             mMediaPlayer!!.release()
             mMediaPlayer = null
-            mAudioManager!!.abandonAudioFocus(mOnAudioFocusChangeListener)
+            mAudioManager?.abandonAudioFocus(mOnAudioFocusChangeListener)
         }
     }
 }

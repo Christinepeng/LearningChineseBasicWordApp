@@ -16,15 +16,15 @@ class NumbersActivity : AppCompatActivity() {
     private var mMediaPlayer: MediaPlayer? = null
     private var mAudioManager: AudioManager? = null
     var mOnAudioFocusChangeListener = OnAudioFocusChangeListener { focusChange ->
-        if (focusChange == AudioManager.AUDIOFOCUS_LOSS_TRANSIENT ||
-            focusChange == AudioManager.AUDIOFOCUS_LOSS_TRANSIENT_CAN_DUCK
-        ) {
-            mMediaPlayer!!.pause()
-            mMediaPlayer!!.seekTo(0)
-        } else if (focusChange == AudioManager.AUDIOFOCUS_GAIN) {
-            mMediaPlayer!!.start()
-        } else if (focusChange == AudioManager.AUDIOFOCUS_LOSS) {
-            releaseMediaPlayer()
+        when (focusChange) {
+            AudioManager.AUDIOFOCUS_LOSS_TRANSIENT,
+            AudioManager.AUDIOFOCUS_LOSS_TRANSIENT_CAN_DUCK -> {
+                mMediaPlayer?.pause()
+                mMediaPlayer?.seekTo(0)
+            }
+
+            AudioManager.AUDIOFOCUS_GAIN -> mMediaPlayer?.start()
+            AudioManager.AUDIOFOCUS_LOSS -> releaseMediaPlayer()
         }
     }
     private val mCompletionListener = OnCompletionListener { releaseMediaPlayer() }
@@ -32,6 +32,9 @@ class NumbersActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.word_list)
         mAudioManager = getSystemService(AUDIO_SERVICE) as AudioManager
+        setupListView()
+    }
+    private fun setupListView() {
         val words = ArrayList<Word>()
         words.add(Word("one", "一", R.drawable.number_one, R.raw.number_one))
         words.add(Word("two", "二", R.drawable.number_two, R.raw.number_two))
@@ -56,8 +59,8 @@ class NumbersActivity : AppCompatActivity() {
             )
             if (result == AudioManager.AUDIOFOCUS_REQUEST_GRANTED) {
                 mMediaPlayer = MediaPlayer.create(this@NumbersActivity, word.getmAudioResourceId())
-                mMediaPlayer!!.start()
-                mMediaPlayer!!.setOnCompletionListener(mCompletionListener)
+                mMediaPlayer?.start()
+                mMediaPlayer?.setOnCompletionListener(mCompletionListener)
             }
         }
     }
@@ -71,7 +74,7 @@ class NumbersActivity : AppCompatActivity() {
         if (mMediaPlayer != null) {
             mMediaPlayer!!.release()
             mMediaPlayer = null
-            mAudioManager!!.abandonAudioFocus(mOnAudioFocusChangeListener)
+            mAudioManager?.abandonAudioFocus(mOnAudioFocusChangeListener)
         }
     }
 }

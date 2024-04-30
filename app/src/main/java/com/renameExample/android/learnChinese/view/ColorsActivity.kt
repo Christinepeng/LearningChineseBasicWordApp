@@ -17,33 +17,42 @@ class ColorsActivity : AppCompatActivity() {
     private var mAudioManager: AudioManager? = null
     private val mCompletionListener = OnCompletionListener { releaseMediaPlayer() }
     private val mOnAudioFocusChangeListener = OnAudioFocusChangeListener { focusChange ->
-        if (focusChange == AudioManager.AUDIOFOCUS_LOSS_TRANSIENT ||
-            focusChange == AudioManager.AUDIOFOCUS_LOSS_TRANSIENT_CAN_DUCK
-        ) {
-            mMediaPlayer!!.pause()
-            mMediaPlayer!!.seekTo(0)
-        } else if (focusChange == AudioManager.AUDIOFOCUS_GAIN) {
-            mMediaPlayer!!.start()
-        } else if (focusChange == AudioManager.AUDIOFOCUS_LOSS) {
-            releaseMediaPlayer()
+        when (focusChange) {
+            AudioManager.AUDIOFOCUS_LOSS_TRANSIENT,
+            AudioManager.AUDIOFOCUS_LOSS_TRANSIENT_CAN_DUCK -> {
+                mMediaPlayer?.pause()
+                mMediaPlayer?.seekTo(0)
+            }
+
+            AudioManager.AUDIOFOCUS_GAIN -> mMediaPlayer?.start()
+            AudioManager.AUDIOFOCUS_LOSS -> releaseMediaPlayer()
         }
+
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.word_list)
         mAudioManager = getSystemService(AUDIO_SERVICE) as AudioManager
+        setupListView()
+    }
+
+    private fun setupListView() {
         val words = ArrayList<Word>()
         words.add(Word("red", "紅色", R.drawable.color_red, R.raw.color_red))
         words.add(
             Word(
-                "mustard yellow", "芥末黃", R.drawable.color_mustard_yellow,
+                "mustard yellow",
+                "芥末黃",
+                R.drawable.color_mustard_yellow,
                 R.raw.color_mustard_yellow
             )
         )
         words.add(
             Word(
-                "dusty yellow", "土黃色", R.drawable.color_dusty_yellow,
+                "dusty yellow",
+                "土黃色",
+                R.drawable.color_dusty_yellow,
                 R.raw.color_dusty_yellow
             )
         )
@@ -55,17 +64,17 @@ class ColorsActivity : AppCompatActivity() {
         val adapter = WordAdapter(this, words, R.color.category_colors)
         val listView = findViewById<View>(R.id.list) as ListView
         listView.setAdapter(adapter)
-        listView.onItemClickListener = OnItemClickListener { adapterView, view, position, l ->
+        listView.onItemClickListener = OnItemClickListener { _, _, position, _ ->
             releaseMediaPlayer()
             val word = words[position]
-            val result = mAudioManager!!.requestAudioFocus(
+            val result = mAudioManager?.requestAudioFocus(
                 mOnAudioFocusChangeListener,
                 AudioManager.STREAM_MUSIC, AudioManager.AUDIOFOCUS_GAIN_TRANSIENT
             )
             if (result == AudioManager.AUDIOFOCUS_REQUEST_GRANTED) {
                 mMediaPlayer = MediaPlayer.create(this@ColorsActivity, word.getmAudioResourceId())
-                mMediaPlayer!!.start()
-                mMediaPlayer!!.setOnCompletionListener(mCompletionListener)
+                mMediaPlayer?.start()
+                mMediaPlayer?.setOnCompletionListener(mCompletionListener)
             }
         }
     }
@@ -79,7 +88,7 @@ class ColorsActivity : AppCompatActivity() {
         if (mMediaPlayer != null) {
             mMediaPlayer!!.release()
             mMediaPlayer = null
-            mAudioManager!!.abandonAudioFocus(mOnAudioFocusChangeListener)
+            mAudioManager?.abandonAudioFocus(mOnAudioFocusChangeListener)
         }
     }
 }
