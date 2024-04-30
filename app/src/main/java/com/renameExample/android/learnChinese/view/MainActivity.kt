@@ -8,34 +8,31 @@ import android.support.v7.app.AppCompatActivity
 import android.view.View
 import android.widget.TextView
 import com.renameExample.android.learnChinese.R
+import com.renameExample.android.learnChinese.databinding.ActivityMainBinding
 
 class MainActivity : AppCompatActivity() {
+    private val binding: ActivityMainBinding by lazy { ActivityMainBinding.inflate(layoutInflater) }
     private val numbersLiveData = MutableLiveData<Boolean>()
     private val familyLiveData = MutableLiveData<Boolean>()
     private val colorsLiveData = MutableLiveData<Boolean>()
     private val phrasesLiveData = MutableLiveData<Boolean>()
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_main)
+        setContentView(binding.root)
 
-        val numbers = findViewById<TextView>(R.id.numbers)
-        val family = findViewById<TextView>(R.id.family)
-        val colors = findViewById<TextView>(R.id.colors)
-        val phrases = findViewById<TextView>(R.id.phrases)
-
-        numbers.setOnClickListener {
+        binding.numbers.setOnClickListener {
             numbersLiveData.value = true
         }
 
-        family.setOnClickListener {
+        binding.family.setOnClickListener {
             familyLiveData.value = true
         }
 
-        colors.setOnClickListener {
+        binding.colors.setOnClickListener {
             colorsLiveData.value = true
         }
 
-        phrases.setOnClickListener {
+        binding.phrases.setOnClickListener {
             phrasesLiveData.value = true
         }
 
