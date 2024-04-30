@@ -1,5 +1,7 @@
 package com.renameExample.android.learnChinese.view
 
+import android.arch.lifecycle.Observer
+import android.arch.lifecycle.ViewModelProvider
 import android.media.AudioManager
 import android.media.AudioManager.OnAudioFocusChangeListener
 import android.media.MediaPlayer
@@ -11,8 +13,10 @@ import android.widget.AdapterView.OnItemClickListener
 import android.widget.ListView
 import com.renameExample.android.learnChinese.R
 import com.renameExample.android.learnChinese.model.Word
+import com.renameExample.android.learnChinese.viewModel.ColorsViewModel
 
 class ColorsActivity : AppCompatActivity() {
+    private lateinit var viewModel: ColorsViewModel
     private var mMediaPlayer: MediaPlayer? = null
     private var mAudioManager: AudioManager? = null
     private val mCompletionListener = OnCompletionListener { releaseMediaPlayer() }
@@ -34,45 +38,34 @@ class ColorsActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.word_list)
         mAudioManager = getSystemService(AUDIO_SERVICE) as AudioManager
+        viewModel = ViewModelProvider(
+            this,
+            ViewModelProvider.AndroidViewModelFactory.getInstance(application)
+        ).get(ColorsViewModel::class.java)
+
         setupListView()
     }
 
     private fun setupListView() {
-        val words = ArrayList<Word>()
-        words.add(Word("red", "紅色", R.drawable.color_red, R.raw.color_red))
-        words.add(
-            Word(
-                "mustard yellow",
-                "芥末黃",
-                R.drawable.color_mustard_yellow,
-                R.raw.color_mustard_yellow
-            )
-        )
-        words.add(
-            Word(
-                "dusty yellow",
-                "土黃色",
-                R.drawable.color_dusty_yellow,
-                R.raw.color_dusty_yellow
-            )
-        )
-        words.add(Word("green", "綠色", R.drawable.color_green, R.raw.color_green))
-        words.add(Word("brown", "咖啡色", R.drawable.color_brown, R.raw.color_brown))
-        words.add(Word("gray", "灰色", R.drawable.color_gray, R.raw.color_gray))
-        words.add(Word("black", "黑色", R.drawable.color_black, R.raw.color_black))
-        words.add(Word("white", "白色", R.drawable.color_white, R.raw.color_white))
-        val adapter = WordAdapter(this, words, R.color.category_colors)
+        val adapter = WordAdapter(this, ArrayList(), R.color.category_colors)
         val listView = findViewById<View>(R.id.list) as ListView
-        listView.setAdapter(adapter)
+        listView.adapter = adapter
+        viewModel.words.observe(this, Observer { words ->
+            words?.let {
+                adapter.addAll(words)
+            }
+        })
+
+
         listView.onItemClickListener = OnItemClickListener { _, _, position, _ ->
             releaseMediaPlayer()
-            val word = words[position]
+            val word = adapter.getItem(position)
             val result = mAudioManager?.requestAudioFocus(
                 mOnAudioFocusChangeListener,
                 AudioManager.STREAM_MUSIC, AudioManager.AUDIOFOCUS_GAIN_TRANSIENT
             )
             if (result == AudioManager.AUDIOFOCUS_REQUEST_GRANTED) {
-                mMediaPlayer = MediaPlayer.create(this@ColorsActivity, word.getmAudioResourceId())
+                mMediaPlayer = MediaPlayer.create(this@ColorsActivity, word!!.getmAudioResourceId())
                 mMediaPlayer?.start()
                 mMediaPlayer?.setOnCompletionListener(mCompletionListener)
             }

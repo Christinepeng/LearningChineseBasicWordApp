@@ -1,5 +1,7 @@
 package com.renameExample.android.learnChinese.view
 
+import android.arch.lifecycle.Observer
+import android.arch.lifecycle.ViewModelProvider
 import android.media.AudioManager
 import android.media.AudioManager.OnAudioFocusChangeListener
 import android.media.MediaPlayer
@@ -11,8 +13,11 @@ import android.widget.AdapterView.OnItemClickListener
 import android.widget.ListView
 import com.renameExample.android.learnChinese.R
 import com.renameExample.android.learnChinese.model.Word
+import com.renameExample.android.learnChinese.viewModel.ColorsViewModel
+import com.renameExample.android.learnChinese.viewModel.PhrasesViewModel
 
 class PhrasesActivity : AppCompatActivity() {
+    private lateinit var viewModel: PhrasesViewModel
     private var mMediaPlayer: MediaPlayer? = null
     private var mAudioManager: AudioManager? = null
     private val mCompletionListener = OnCompletionListener { releaseMediaPlayer() }
@@ -33,42 +38,33 @@ class PhrasesActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.word_list)
         mAudioManager = getSystemService(AUDIO_SERVICE) as AudioManager
+        viewModel = ViewModelProvider(
+            this,
+            ViewModelProvider.AndroidViewModelFactory.getInstance(application)
+        ).get(PhrasesViewModel::class.java)
         setupListView()
     }
+
     private fun setupListView() {
-        val words = ArrayList<Word>()
-        words.add(
-            Word(
-                "Where are you going?", "你要去哪裡？",
-                R.raw.phrase_where_are_you_going
-            )
-        )
-        words.add(
-            Word(
-                "What is your name?", "你叫什麼名字？",
-                R.raw.phrase_what_is_your_name
-            )
-        )
-        words.add(Word("My name is...", "我的名字是...", R.raw.phrase_my_name_is))
-        words.add(Word("How are you feeling?", "你感覺怎麼樣？", R.raw.phrase_how_are_you_feeling))
-        words.add(Word("I’m feeling good.", "我感覺很好。", R.raw.phrase_im_feeling_good))
-        words.add(Word("Are you coming?", "你來嗎？", R.raw.phrase_are_you_coming))
-        words.add(Word("Yes, I’m coming.", "是的，我來了。", R.raw.phrase_yes_im_coming))
-        words.add(Word("I’m coming.", "我來了。", R.raw.phrase_im_coming))
-        words.add(Word("Let’s go.", "走吧。", R.raw.phrase_lets_go))
-        words.add(Word("Come here.", "來這裡。", R.raw.phrase_come_here))
-        val adapter = WordAdapter(this, words, R.color.category_phrases)
+
+        val adapter = WordAdapter(this, ArrayList(), R.color.category_phrases)
         val listView = findViewById<View>(R.id.list) as ListView
-        listView.setAdapter(adapter)
+        listView.adapter = adapter
+        viewModel.words.observe(this, Observer { words ->
+            words?.let {
+                adapter.addAll(words)
+            }
+        })
+
         listView.onItemClickListener = OnItemClickListener { adapterView, view, position, l ->
             releaseMediaPlayer()
-            val word = words[position]
+            val word = adapter.getItem(position)
             val result = mAudioManager!!.requestAudioFocus(
                 mOnAudioFocusChangeListener,
                 AudioManager.STREAM_MUSIC, AudioManager.AUDIOFOCUS_GAIN_TRANSIENT
             )
             if (result == AudioManager.AUDIOFOCUS_REQUEST_GRANTED) {
-                mMediaPlayer = MediaPlayer.create(this@PhrasesActivity, word.getmAudioResourceId())
+                mMediaPlayer = MediaPlayer.create(this@PhrasesActivity, word!!.getmAudioResourceId())
                 mMediaPlayer?.start()
                 mMediaPlayer?.setOnCompletionListener(mCompletionListener)
             }

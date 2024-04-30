@@ -1,5 +1,7 @@
 package com.renameExample.android.learnChinese.view
 
+import android.arch.lifecycle.Observer
+import android.arch.lifecycle.ViewModelProvider
 import android.media.AudioManager
 import android.media.AudioManager.OnAudioFocusChangeListener
 import android.media.MediaPlayer
@@ -11,8 +13,11 @@ import android.widget.AdapterView.OnItemClickListener
 import android.widget.ListView
 import com.renameExample.android.learnChinese.R
 import com.renameExample.android.learnChinese.model.Word
+import com.renameExample.android.learnChinese.viewModel.ColorsViewModel
+import com.renameExample.android.learnChinese.viewModel.FamilyViewModel
 
 class FamilyActivity : AppCompatActivity() {
+    private lateinit var viewModel: FamilyViewModel
     private var mMediaPlayer: MediaPlayer? = null
     private var mAudioManager: AudioManager? = null
     private val mCompletionListener = OnCompletionListener { releaseMediaPlayer() }
@@ -33,63 +38,33 @@ class FamilyActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.word_list)
         mAudioManager = getSystemService(AUDIO_SERVICE) as AudioManager
+        viewModel = ViewModelProvider(
+            this,
+            ViewModelProvider.AndroidViewModelFactory.getInstance(application)
+        ).get(FamilyViewModel::class.java)
         setupListView()
     }
 
     private fun setupListView() {
-        val words = ArrayList<Word>()
-        words.add(Word("father", "爸爸", R.drawable.family_father, R.raw.family_father))
-        words.add(Word("mother", "媽媽", R.drawable.family_mother, R.raw.family_mother))
-        words.add(Word("son", "兒子", R.drawable.family_son, R.raw.family_son))
-        words.add(Word("daughter", "女兒", R.drawable.family_daughter, R.raw.family_daughter))
-        words.add(
-            Word(
-                "older brother", "哥哥", R.drawable.family_older_brother,
-                R.raw.family_older_brother
-            )
-        )
-        words.add(
-            Word(
-                "younger brother", "弟弟", R.drawable.family_younger_brother,
-                R.raw.family_younger_brother
-            )
-        )
-        words.add(
-            Word(
-                "older sister", "姊姊", R.drawable.family_older_sister,
-                R.raw.family_older_sister
-            )
-        )
-        words.add(
-            Word(
-                "younger sister", "妹妹", R.drawable.family_younger_sister,
-                R.raw.family_younger_sister
-            )
-        )
-        words.add(
-            Word(
-                "grandmother ", "奶奶", R.drawable.family_grandmother,
-                R.raw.family_grandmother
-            )
-        )
-        words.add(
-            Word(
-                "grandfather", "爺爺", R.drawable.family_grandfather,
-                R.raw.family_grandfather
-            )
-        )
-        val adapter = WordAdapter(this, words, R.color.category_family)
+
+        val adapter = WordAdapter(this, ArrayList(), R.color.category_family)
         val listView = findViewById<View>(R.id.list) as ListView
-        listView.setAdapter(adapter)
+        listView.adapter = adapter
+        viewModel.words.observe(this, Observer { words ->
+            words?.let {
+                adapter.addAll(words)
+            }
+        })
+
         listView.onItemClickListener = OnItemClickListener { adapterView, view, position, l ->
             releaseMediaPlayer()
-            val word = words[position]
+            val word = adapter.getItem(position)
             val result = mAudioManager!!.requestAudioFocus(
                 mOnAudioFocusChangeListener,
                 AudioManager.STREAM_MUSIC, AudioManager.AUDIOFOCUS_GAIN_TRANSIENT
             )
             if (result == AudioManager.AUDIOFOCUS_REQUEST_GRANTED) {
-                mMediaPlayer = MediaPlayer.create(this@FamilyActivity, word.getmAudioResourceId())
+                mMediaPlayer = MediaPlayer.create(this@FamilyActivity, word!!.getmAudioResourceId())
                 mMediaPlayer?.start()
                 mMediaPlayer?.setOnCompletionListener(mCompletionListener)
             }
