@@ -8,14 +8,13 @@ import android.media.MediaPlayer
 import android.media.MediaPlayer.OnCompletionListener
 import android.os.Bundle
 import android.support.v7.app.AppCompatActivity
-import android.view.View
 import android.widget.AdapterView.OnItemClickListener
-import android.widget.ListView
 import com.renameExample.android.learnChinese.R
-import com.renameExample.android.learnChinese.model.Word
+import com.renameExample.android.learnChinese.databinding.WordListBinding
 import com.renameExample.android.learnChinese.viewModel.ColorsViewModel
 
 class ColorsActivity : AppCompatActivity() {
+    private val binding: WordListBinding by lazy { WordListBinding.inflate(layoutInflater) }
     private lateinit var viewModel: ColorsViewModel
     private var mMediaPlayer: MediaPlayer? = null
     private var mAudioManager: AudioManager? = null
@@ -36,7 +35,7 @@ class ColorsActivity : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.word_list)
+        setContentView(binding.root)
         mAudioManager = getSystemService(AUDIO_SERVICE) as AudioManager
         viewModel = ViewModelProvider(
             this,
@@ -48,8 +47,7 @@ class ColorsActivity : AppCompatActivity() {
 
     private fun setupListView() {
         val adapter = WordAdapter(this, ArrayList(), R.color.category_colors)
-        val listView = findViewById<View>(R.id.list) as ListView
-        listView.adapter = adapter
+        binding.list.adapter = adapter
         viewModel.words.observe(this, Observer { words ->
             words?.let {
                 adapter.addAll(words)
@@ -57,7 +55,7 @@ class ColorsActivity : AppCompatActivity() {
         })
 
 
-        listView.onItemClickListener = OnItemClickListener { _, _, position, _ ->
+        binding.list.onItemClickListener = OnItemClickListener { _, _, position, _ ->
             releaseMediaPlayer()
             val word = adapter.getItem(position)
             val result = mAudioManager?.requestAudioFocus(

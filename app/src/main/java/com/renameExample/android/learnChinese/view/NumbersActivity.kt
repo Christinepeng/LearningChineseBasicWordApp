@@ -8,15 +8,13 @@ import android.media.MediaPlayer
 import android.media.MediaPlayer.OnCompletionListener
 import android.os.Bundle
 import android.support.v7.app.AppCompatActivity
-import android.view.View
 import android.widget.AdapterView.OnItemClickListener
-import android.widget.ListView
 import com.renameExample.android.learnChinese.R
-import com.renameExample.android.learnChinese.model.Word
-import com.renameExample.android.learnChinese.viewModel.ColorsViewModel
+import com.renameExample.android.learnChinese.databinding.WordListBinding
 import com.renameExample.android.learnChinese.viewModel.NumbersViewModel
 
 class NumbersActivity : AppCompatActivity() {
+    private val binding: WordListBinding by lazy { WordListBinding.inflate(layoutInflater) }
     private lateinit var viewModel: NumbersViewModel
     private var mMediaPlayer: MediaPlayer? = null
     private var mAudioManager: AudioManager? = null
@@ -35,7 +33,7 @@ class NumbersActivity : AppCompatActivity() {
     private val mCompletionListener = OnCompletionListener { releaseMediaPlayer() }
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.word_list)
+        setContentView(binding.root)
         mAudioManager = getSystemService(AUDIO_SERVICE) as AudioManager
         viewModel = ViewModelProvider(
             this,
@@ -43,18 +41,19 @@ class NumbersActivity : AppCompatActivity() {
         ).get(NumbersViewModel::class.java)
         setupListView()
     }
+
     private fun setupListView() {
 
         val adapter = WordAdapter(this, ArrayList(), R.color.category_numbers)
-        val listView = findViewById<View>(R.id.list) as ListView
-        listView.adapter = adapter
+        binding.list.adapter = adapter
+
         viewModel.words.observe(this, Observer { words ->
             words?.let {
                 adapter.addAll(words)
             }
         })
 
-        listView.onItemClickListener = OnItemClickListener { adapterView, view, position, id ->
+        binding.list.onItemClickListener = OnItemClickListener { adapterView, view, position, id ->
             val word = adapter.getItem(position)
             releaseMediaPlayer()
             val result = mAudioManager!!.requestAudioFocus(
@@ -63,7 +62,8 @@ class NumbersActivity : AppCompatActivity() {
                 AudioManager.AUDIOFOCUS_GAIN_TRANSIENT
             )
             if (result == AudioManager.AUDIOFOCUS_REQUEST_GRANTED) {
-                mMediaPlayer = MediaPlayer.create(this@NumbersActivity, word!!.getmAudioResourceId())
+                mMediaPlayer =
+                    MediaPlayer.create(this@NumbersActivity, word!!.getmAudioResourceId())
                 mMediaPlayer?.start()
                 mMediaPlayer?.setOnCompletionListener(mCompletionListener)
             }
