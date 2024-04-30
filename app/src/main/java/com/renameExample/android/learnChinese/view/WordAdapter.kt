@@ -1,4 +1,4 @@
-package com.renameExample.android.learnChinese
+package com.renameExample.android.learnChinese.view
 
 import android.content.Context
 import android.support.v4.content.ContextCompat
@@ -8,6 +8,8 @@ import android.view.ViewGroup
 import android.widget.ArrayAdapter
 import android.widget.ImageView
 import android.widget.TextView
+import com.renameExample.android.learnChinese.R
+import com.renameExample.android.learnChinese.model.Word
 
 class WordAdapter(context: Context?, words: ArrayList<Word>?, private val mColorResourceId: Int) :
     ArrayAdapter<Word>(

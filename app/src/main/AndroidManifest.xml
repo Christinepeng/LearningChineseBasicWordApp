@@ -8,24 +8,24 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
         <activity
-            android:name="com.renameExample.android.learnChinese.NumbersActivity"
+            android:name="com.renameExample.android.learnChinese.view.NumbersActivity"
             android:label="@string/category_numbers"
-            android:parentActivityName="com.renameExample.android.learnChinese.MainActivity">
+            android:parentActivityName="com.renameExample.android.learnChinese.view.MainActivity">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
-                android:value="com.renameExample.android.learnChinese.MainActivity"/>
+                android:value="com.renameExample.android.learnChinese.view.MainActivity"/>
         </activity>
         <activity
-            android:name="com.renameExample.android.learnChinese.FamilyActivity"
+            android:name="com.renameExample.android.learnChinese.view.FamilyActivity"
             android:label="@string/category_family"/>
         <activity
-            android:name="com.renameExample.android.learnChinese.ColorsActivity"
+            android:name="com.renameExample.android.learnChinese.view.ColorsActivity"
             android:label="@string/category_colors"/>
         <activity
-            android:name="com.renameExample.android.learnChinese.PhrasesActivity"
+            android:name="com.renameExample.android.learnChinese.view.PhrasesActivity"
             android:label="@string/category_phrases"/>
 
-        <activity android:name="com.renameExample.android.learnChinese.MainActivity"
+        <activity android:name="com.renameExample.android.learnChinese.view.MainActivity"
             android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />

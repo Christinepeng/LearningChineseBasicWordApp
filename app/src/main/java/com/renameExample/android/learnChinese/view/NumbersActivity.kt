@@ -1,4 +1,4 @@
-package com.renameExample.android.learnChinese
+package com.renameExample.android.learnChinese.view
 
 import android.media.AudioManager
 import android.media.AudioManager.OnAudioFocusChangeListener
@@ -9,6 +9,8 @@ import android.support.v7.app.AppCompatActivity
 import android.view.View
 import android.widget.AdapterView.OnItemClickListener
 import android.widget.ListView
+import com.renameExample.android.learnChinese.R
+import com.renameExample.android.learnChinese.model.Word
 
 class NumbersActivity : AppCompatActivity() {
     private var mMediaPlayer: MediaPlayer? = null

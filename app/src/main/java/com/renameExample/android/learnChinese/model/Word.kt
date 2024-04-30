@@ -1,4 +1,4 @@
-package com.renameExample.android.learnChinese
+package com.renameExample.android.learnChinese.model
 
 class Word {
     var defaultTranslation: String
