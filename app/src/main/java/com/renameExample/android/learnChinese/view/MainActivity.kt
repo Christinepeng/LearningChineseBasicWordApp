@@ -1,63 +1,42 @@
 package com.renameExample.android.learnChinese.view
 
-import android.arch.lifecycle.MutableLiveData
-import android.arch.lifecycle.Observer
 import android.content.Intent
 import android.os.Bundle
 import android.support.v7.app.AppCompatActivity
+import android.support.v7.widget.LinearLayoutManager
 import android.view.View
-import android.widget.TextView
 import com.renameExample.android.learnChinese.R
 import com.renameExample.android.learnChinese.databinding.ActivityMainBinding
 
 class MainActivity : AppCompatActivity() {
     private val binding: ActivityMainBinding by lazy { ActivityMainBinding.inflate(layoutInflater) }
-    private val numbersLiveData = MutableLiveData<Boolean>()
-    private val familyLiveData = MutableLiveData<Boolean>()
-    private val colorsLiveData = MutableLiveData<Boolean>()
-    private val phrasesLiveData = MutableLiveData<Boolean>()
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(binding.root)
 
-        binding.numbers.setOnClickListener {
-            numbersLiveData.value = true
-        }
-
-        binding.family.setOnClickListener {
-            familyLiveData.value = true
-        }
-
-        binding.colors.setOnClickListener {
-            colorsLiveData.value = true
-        }
-
-        binding.phrases.setOnClickListener {
-            phrasesLiveData.value = true
-        }
-
-        observeLiveData()
+        binding.categoryRecyclerView.layoutManager = LinearLayoutManager(this)
+        binding.categoryRecyclerView.adapter = CategoryAdapter(getCategories())
     }
 
-    private fun observeLiveData() {
-        numbersLiveData.observe(this, Observer {
-            val numbersIntent = Intent(this@MainActivity, NumbersActivity::class.java)
-            startActivity(numbersIntent)
-        })
+    private fun getCategories(): List<String> {
+        return listOf(
+            getString(R.string.category_numbers),
+            getString(R.string.category_family),
+            getString(R.string.category_colors),
+            getString(R.string.category_phrases)
+        )
+    }
 
-        familyLiveData.observe(this, Observer {
-            val familyIntent = Intent(this@MainActivity, FamilyActivity::class.java)
-            startActivity(familyIntent)
-        })
-
-        colorsLiveData.observe(this, Observer {
-            val colorsIntent = Intent(this@MainActivity, ColorsActivity::class.java)
-            startActivity(colorsIntent)
-        })
-
-        phrasesLiveData.observe(this, Observer {
-            val phrasesIntent = Intent(this@MainActivity, PhrasesActivity::class.java)
-            startActivity(phrasesIntent)
-        })
+    fun onCategoryClicked(view: View) {
+        val categoryName = view.tag as String
+        val intent = when (categoryName) {
+            getString(R.string.category_numbers) -> Intent(this, NumbersActivity::class.java)
+            getString(R.string.category_family) -> Intent(this, FamilyActivity::class.java)
+            getString(R.string.category_colors) -> Intent(this, ColorsActivity::class.java)
+            getString(R.string.category_phrases) -> Intent(this, PhrasesActivity::class.java)
+            else -> null
+        }
+        startActivity(intent)
     }
 }
