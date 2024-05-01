@@ -1,46 +1,28 @@
-Learning Chinese Basic Word App
-===================================
+# Learning Chinese Basic Word App
 
-This app displays lists of vocabulary words for the user to learn the Chinese language.
 
-Pre-requisites
---------------
+## Description
+This app displays lists of vocabulary words for the user to learn the Chinese language.<br /><br />
 
-- Android SDK v23
-- Android Build Tools v23.0.2
-- Android Support Repository v23.3.0
+Google Play Store Link:  https://play.google.com/store/apps/details?id=com.renameExample.android.learnChinese<br /><br />
+Demo Video Link: <br /><br />
+Screenshots:  <br /><br />
+<img width="250" alt="Screenshot 2024-04-29 at 3 41 47 PM" src="https://github.com/Christinepeng/LearningChineseBasicWordApp/assets/31935989/2a3789be-4549-4fa9-b551-ccb6827478ad">
+<img width="250" alt="Screenshot 2024-04-29 at 3 43 01 PM" src="https://github.com/Christinepeng/LearningChineseBasicWordApp/assets/31935989/6bbed600-613e-4b8c-8ac2-d2b7318ff3cc">
+<img width="250" alt="Screenshot 2024-04-29 at 3 43 56 PM" src="https://github.com/Christinepeng/LearningChineseBasicWordApp/assets/31935989/85e0cf20-3d33-4aac-ad65-49aa7cbe33ff">
+<img width="250" alt="Screenshot 2024-04-29 at 3 44 11 PM" src="https://github.com/Christinepeng/LearningChineseBasicWordApp/assets/31935989/485cb07e-d913-40eb-a34a-4473d65cbe84">
+<img width="250" alt="Screenshot 2024-04-29 at 3 44 23 PM" src="https://github.com/Christinepeng/LearningChineseBasicWordApp/assets/31935989/633ecf4e-ee5b-4ea8-91bc-f72e479a303d">
 
-Getting Started
----------------
 
-This sample uses the Gradle build system. To build this project, use the
-"gradlew build" command or use "Import Project" in Android Studio.
-
-Support
--------
-
-- Google+ Community: https://plus.google.com/communities/105153134372062985968
-- Stack Overflow: http://stackoverflow.com/questions/tagged/android
-
-Patches are encouraged, and may be submitted by forking this project and
-submitting a pull request through GitHub. Please see CONTRIBUTING.md for more details.
-
-License
--------
-
-Copyright 2016 The Android Open Source Project, Inc.
-
-Licensed to the Apache Software Foundation (ASF) under one or more contributor
-license agreements.  See the NOTICE file distributed with this work for
-additional information regarding copyright ownership.  The ASF licenses this
-file to you under the Apache License, Version 2.0 (the "License"); you may not
-use this file except in compliance with the License.  You may obtain a copy of
-the License at
-
-http://www.apache.org/licenses/LICENSE-2.0
-
-Unless required by applicable law or agreed to in writing, software
-distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
-WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.  See the
-License for the specific language governing permissions and limitations under
-the License.
+## Motivation 
+- LiveData Data Binding
+  
+- MVVM
+  
+- Room
+  
+- RecyclerView
+  
+- Coroutines
+  
+- Navigation
