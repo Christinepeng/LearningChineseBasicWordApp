@@ -1,8 +1,9 @@
 package com.renameExample.android.learnChinese.viewModel
 
-import android.arch.lifecycle.LiveData
-import android.arch.lifecycle.MutableLiveData
-import android.arch.lifecycle.ViewModel
+
+import androidx.lifecycle.LiveData
+import androidx.lifecycle.MutableLiveData
+import androidx.lifecycle.ViewModel
 import com.renameExample.android.learnChinese.R
 import com.renameExample.android.learnChinese.model.Word
 

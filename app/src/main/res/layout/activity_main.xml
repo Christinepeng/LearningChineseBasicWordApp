@@ -6,8 +6,8 @@
     android:background="@color/tan_background"
     android:orientation="vertical"
     tools:context="com.renameExample.android.learnChinese.view.MainActivity">
-    
-    <android.support.v7.widget.RecyclerView
+
+    <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/categoryRecyclerView"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"/>

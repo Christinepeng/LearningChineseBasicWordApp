@@ -1,14 +1,16 @@
 package com.renameExample.android.learnChinese.view
 
-import android.arch.lifecycle.Observer
-import android.arch.lifecycle.ViewModelProvider
+
 import android.media.AudioManager
 import android.media.AudioManager.OnAudioFocusChangeListener
 import android.media.MediaPlayer
 import android.media.MediaPlayer.OnCompletionListener
 import android.os.Bundle
-import android.support.v7.app.AppCompatActivity
 import android.widget.AdapterView.OnItemClickListener
+import androidx.appcompat.app.AppCompatActivity
+import androidx.lifecycle.Observer
+import androidx.lifecycle.ViewModel
+import androidx.lifecycle.ViewModelProvider
 import com.renameExample.android.learnChinese.R
 import com.renameExample.android.learnChinese.databinding.WordListBinding
 import com.renameExample.android.learnChinese.viewModel.ColorsViewModel
