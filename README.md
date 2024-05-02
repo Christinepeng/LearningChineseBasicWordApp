@@ -15,14 +15,18 @@ Screenshots:  <br /><br />
 
 
 ## Motivation 
-- LiveData Data Binding
-  
 - MVVM
+
+- RecyclerView
+
+- LiveData
+
+- Data Binding
   
 - Room
-  
-- RecyclerView
   
 - Coroutines
   
 - Navigation
+
+- MediaPlayer
