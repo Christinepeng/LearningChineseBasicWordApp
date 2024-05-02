@@ -16,7 +16,7 @@ class CategoryAdapter(private val onClickListener: (Category) -> Unit) :
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
         val view = LayoutInflater.from(parent.context)
-            .inflate(R.layout.item_category, parent, false)
+            .inflate(R.layout.category_item, parent, false)
         return ViewHolder(view)
     }
 
