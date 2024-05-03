@@ -9,11 +9,14 @@ import android.widget.AdapterView.OnItemClickListener
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
+import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.RecyclerView
 import com.renameExample.android.learnChinese.R
 import com.renameExample.android.learnChinese.databinding.WordListBinding
+import com.renameExample.android.learnChinese.model.Word
 import com.renameExample.android.learnChinese.viewModel.PhrasesViewModel
 
-class PhrasesActivity : AppCompatActivity() {
+class PhrasesActivity : AppCompatActivity(), WordItemClickListener  {
     private val binding: WordListBinding by lazy { WordListBinding.inflate(layoutInflater) }
     private lateinit var viewModel: PhrasesViewModel
     private var mMediaPlayer: MediaPlayer? = null
@@ -40,33 +43,19 @@ class PhrasesActivity : AppCompatActivity() {
             this,
             ViewModelProvider.AndroidViewModelFactory.getInstance(application)
         ).get(PhrasesViewModel::class.java)
-        setupListView()
+        setupRecyclerView()
     }
 
-    private fun setupListView() {
-
-        val adapter = WordAdapter(this, ArrayList(), R.color.category_phrases)
-        binding.list.adapter = adapter
+    private fun setupRecyclerView() {
+        val adapter = WordAdapter(this, ArrayList(), this, R.color.category_phrases)
+        binding.wordRecyclerView.layoutManager = LinearLayoutManager(this)
+        binding.wordRecyclerView.adapter = adapter as RecyclerView.Adapter<RecyclerView.ViewHolder>
 
         viewModel.words.observe(this, Observer { words ->
             words?.let {
                 adapter.addAll(words)
             }
         })
-
-        binding.list.onItemClickListener = OnItemClickListener { adapterView, view, position, l ->
-            releaseMediaPlayer()
-            val word = adapter.getItem(position)
-            val result = mAudioManager!!.requestAudioFocus(
-                mOnAudioFocusChangeListener,
-                AudioManager.STREAM_MUSIC, AudioManager.AUDIOFOCUS_GAIN_TRANSIENT
-            )
-            if (result == AudioManager.AUDIOFOCUS_REQUEST_GRANTED) {
-                mMediaPlayer = MediaPlayer.create(this@PhrasesActivity, word!!.getmAudioResourceId())
-                mMediaPlayer?.start()
-                mMediaPlayer?.setOnCompletionListener(mCompletionListener)
-            }
-        }
     }
 
     override fun onStop() {
@@ -79,6 +68,20 @@ class PhrasesActivity : AppCompatActivity() {
             mMediaPlayer!!.release()
             mMediaPlayer = null
             mAudioManager?.abandonAudioFocus(mOnAudioFocusChangeListener)
+        }
+    }
+
+    override fun onWordClicked(word: Word) {
+        releaseMediaPlayer()
+        val result = mAudioManager!!.requestAudioFocus(
+            mOnAudioFocusChangeListener,
+            AudioManager.STREAM_MUSIC,
+            AudioManager.AUDIOFOCUS_GAIN_TRANSIENT
+        )
+        if (result == AudioManager.AUDIOFOCUS_REQUEST_GRANTED) {
+            mMediaPlayer = MediaPlayer.create(this@PhrasesActivity, word.getmAudioResourceId())
+            mMediaPlayer?.start()
+            mMediaPlayer?.setOnCompletionListener(mCompletionListener)
         }
     }
 }

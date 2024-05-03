@@ -6,15 +6,18 @@ import android.media.AudioManager.OnAudioFocusChangeListener
 import android.media.MediaPlayer
 import android.media.MediaPlayer.OnCompletionListener
 import android.os.Bundle
-import android.widget.AdapterView.OnItemClickListener
+import android.util.Log
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
+import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.RecyclerView
 import com.renameExample.android.learnChinese.R
 import com.renameExample.android.learnChinese.databinding.WordListBinding
+import com.renameExample.android.learnChinese.model.Word
 import com.renameExample.android.learnChinese.viewModel.NumbersViewModel
 
-class NumbersActivity : AppCompatActivity() {
+class NumbersActivity : AppCompatActivity(), WordItemClickListener {
     private val binding: WordListBinding by lazy { WordListBinding.inflate(layoutInflater) }
     private lateinit var viewModel: NumbersViewModel
     private var mMediaPlayer: MediaPlayer? = null
@@ -40,35 +43,19 @@ class NumbersActivity : AppCompatActivity() {
             this,
             ViewModelProvider.AndroidViewModelFactory.getInstance(application)
         ).get(NumbersViewModel::class.java)
-        setupListView()
+        setupRecyclerView()
     }
 
-    private fun setupListView() {
-
-        val adapter = WordAdapter(this, ArrayList(), R.color.category_numbers)
-        binding.list.adapter = adapter
+    private fun setupRecyclerView() {
+        val adapter = WordAdapter(this, ArrayList(), this, R.color.category_numbers)
+        binding.wordRecyclerView.layoutManager = LinearLayoutManager(this)
+        binding.wordRecyclerView.adapter = adapter as RecyclerView.Adapter<RecyclerView.ViewHolder>
 
         viewModel.words.observe(this, Observer { words ->
             words?.let {
                 adapter.addAll(words)
             }
         })
-
-        binding.list.onItemClickListener = OnItemClickListener { adapterView, view, position, id ->
-            val word = adapter.getItem(position)
-            releaseMediaPlayer()
-            val result = mAudioManager!!.requestAudioFocus(
-                mOnAudioFocusChangeListener,
-                AudioManager.STREAM_MUSIC,
-                AudioManager.AUDIOFOCUS_GAIN_TRANSIENT
-            )
-            if (result == AudioManager.AUDIOFOCUS_REQUEST_GRANTED) {
-                mMediaPlayer =
-                    MediaPlayer.create(this@NumbersActivity, word!!.getmAudioResourceId())
-                mMediaPlayer?.start()
-                mMediaPlayer?.setOnCompletionListener(mCompletionListener)
-            }
-        }
     }
 
     override fun onStop() {
@@ -81,6 +68,20 @@ class NumbersActivity : AppCompatActivity() {
             mMediaPlayer!!.release()
             mMediaPlayer = null
             mAudioManager?.abandonAudioFocus(mOnAudioFocusChangeListener)
+        }
+    }
+
+    override fun onWordClicked(word: Word) {
+        releaseMediaPlayer()
+        val result = mAudioManager!!.requestAudioFocus(
+            mOnAudioFocusChangeListener,
+            AudioManager.STREAM_MUSIC,
+            AudioManager.AUDIOFOCUS_GAIN_TRANSIENT
+        )
+        if (result == AudioManager.AUDIOFOCUS_REQUEST_GRANTED) {
+            mMediaPlayer = MediaPlayer.create(this@NumbersActivity, word.getmAudioResourceId())
+            mMediaPlayer?.start()
+            mMediaPlayer?.setOnCompletionListener(mCompletionListener)
         }
     }
 }
