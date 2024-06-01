@@ -2,7 +2,8 @@
 
 
 ## Description
-This app displays lists of vocabulary words for the user to learn the Chinese language.<br /><br />
+This app displays lists of vocabulary words for the user to learn the Chinese language.
+<br /><br />
 
 Google Play Store Link:  https://play.google.com/store/apps/details?id=com.renameExample.android.learnChinese<br /><br />
 Demo Video Link: https://www.youtube.com/watch?v=--8EX0i0RbE<br /><br />
